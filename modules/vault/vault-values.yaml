@@ -1,0 +1,44 @@
+global:
+  enabled: true
+  tlsDisable: false
+
+injector:
+  enabled: true
+
+server:
+  enabled: true
+  
+  image:
+    repository: "vault"
+    tag: "1.15.2"
+  
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+
+  dataStorage:
+    enabled: true
+    size: ${vault_storage_size}
+    storageClass: ${storage_class}
+  
+  # Auto-unseal avec KMS
+  ha:
+    enabled: true
+    replicas: 3
+    
+  # Configuration Vault
+  standalone:
+    enabled: false
+    
+  auditStorage:
+    enabled: true
+    size: 10Gi
+    storageClass: ${storage_class}
+
+ui:
+  enabled: true
+  serviceType: "ClusterIP"

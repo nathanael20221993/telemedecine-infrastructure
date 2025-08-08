@@ -1,0 +1,34 @@
+name: 🔍 Terraform Validate
+
+on:
+  pull_request:
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+
+jobs:
+  validate:
+    name: Validate Terraform
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: '1.5.0'
+
+    - name: Format Check
+      run: terraform fmt -check -recursive
+
+    - name: Validate All Environments
+      run: |
+        for env in environments/*/; do
+          echo "Validating $env"
+          cd "$env"
+          terraform init -backend=false  
+          terraform validate
+          cd - > /dev/null
+        done
